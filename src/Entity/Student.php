@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StudentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -26,6 +28,17 @@ class Student
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $picture = null;
+
+    /**
+     * @var Collection<int, Absence>
+     */
+    #[ORM\OneToMany(targetEntity: Absence::class, mappedBy: 'student', orphanRemoval: true)]
+    private Collection $absences;
+
+    public function __construct()
+    {
+        $this->absences = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -76,6 +89,36 @@ class Student
     public function setPicture(?string $picture): static
     {
         $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Absence>
+     */
+    public function getAbsences(): Collection
+    {
+        return $this->absences;
+    }
+
+    public function addAbsence(Absence $absence): static
+    {
+        if (!$this->absences->contains($absence)) {
+            $this->absences->add($absence);
+            $absence->setStudent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbsence(Absence $absence): static
+    {
+        if ($this->absences->removeElement($absence)) {
+            // set the owning side to null (unless already changed)
+            if ($absence->getStudent() === $this) {
+                $absence->setStudent(null);
+            }
+        }
 
         return $this;
     }
