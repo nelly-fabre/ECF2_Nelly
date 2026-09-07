@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ student.firstName }} {{ student.familyName }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="card">
+        {% if student.picture %}
+            <img src="{{ asset('uploads/students/' ~ student.picture) }}"
+                 class="card-img-top"
+                 style="height: 250px; object-fit: cover;"
+                 alt="Photo de {{ student.firstName }} {{ student.familyName }}">
+        {% else %}
+            <div class="d-flex align-items-center justify-content-center bg-secondary text-white"
+                 style="height: 250px;">
+                Pas de photo
+            </div>
+        {% endif %}
+
+        <div class="card-body">
+            <h3 class="card-title">{{ student.firstName }} {{ student.familyName }}</h3>
+            <p class="card-text text-muted">N° Afpa : {{ student.idAfpa }}</p>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+            <a href="{{ path('app_student_index') }}" class="btn btn-outline-secondary">← Retour</a>
+            <a href="{{ path('app_student_edit', {'id': student.id}) }}" class="btn btn-primary">Modifier</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
