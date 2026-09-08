@@ -122,4 +122,26 @@ class Student
 
         return $this;
     }
+
+    public function getUnjustifiedAbsences(): int
+    {
+
+        return $this->absences
+            ->filter(fn(Absence $absence) => $absence->getReason()?->getReasonName() === 'Sans motif')
+            ->count();
+    }
+
+    public function getTotalAbsencesCount(): int
+    {
+        return $this->absences->count();
+    }
+
+    public function getEstimatedLostIncome(): float
+    {
+        $monthlyIncome = 712;
+        $workingDaysPerMonth = 21;
+        $dailyRate = $monthlyIncome / $workingDaysPerMonth;
+
+        return round($dailyRate * $this->getTotalAbsencesCount(), 2);
+    }
 }

@@ -19,11 +19,11 @@
         <tbody>
         {% for student in students %}
             <tr>
-                <td>{{ student.id }}</td>
-                <td>{{ student.idAfpa }}</td>
-                <td>{{ student.firstName }}</td>
-                <td>{{ student.familyName }}</td>
-                <td>{{ student.picture }}</td>
+                <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.id }}</td>
+                <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.idAfpa }}</td>
+                <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.firstName }}</td>
+                <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.familyName }}</td>
+                <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.picture }}</td>
                 <td>
                     <a href="{{ path('app_student_show', {'id': student.id}) }}">show</a>
                     {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_edit', {'id': student.id}) }}">edit</a>{%endif %}
@@ -37,5 +37,6 @@
         </tbody>
     </table>
 
-    {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_new') }}">Create new</a>{%endif %}
+    {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_new') }}" class="btn btn-primary">Create new</a>{%endif %}
+    <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">← Retour à l'accueil</a>
 {% endblock %}
