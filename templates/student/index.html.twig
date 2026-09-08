@@ -26,7 +26,7 @@
                 <td>{{ student.picture }}</td>
                 <td>
                     <a href="{{ path('app_student_show', {'id': student.id}) }}">show</a>
-                    <a href="{{ path('app_student_edit', {'id': student.id}) }}">edit</a>
+                    {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_edit', {'id': student.id}) }}">edit</a>{%endif %}
                 </td>
             </tr>
         {% else %}
@@ -37,5 +37,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_student_new') }}">Create new</a>
+    {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_new') }}">Create new</a>{%endif %}
 {% endblock %}
