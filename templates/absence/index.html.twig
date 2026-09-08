@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Absence index{% endblock %}
+
+{% block body %}
+    <h1>Absence index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Stagiaire</th>
+                <th>Date de l'absence</th>
+                <th>Motif de l'absence</th>
+                <th>Justificatif</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for absence in absences %}
+            <tr>
+                <td>{{ absence.student.firstName }} {{ absence.student.familyName }}</td>
+                <td>{{ absence.absenceDay ? absence.absenceDay|date('d-m-Y') : '' }}</td>
+                <td>
+                        {% if absence.reason.reasonName == 'Sans motif' %}
+                            <span class="badge bg-danger">{{ absence.reason.reasonName }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ absence.reason.reasonName }}</span>
+                        {% endif %}
+                    </td>
+                <td>{{ absence.absenceDocument }}</td>
+                <td>
+                    <a href="{{ path('app_absence_show', {'id': absence.id}) }}">voir</a>
+                    <a href="{{ path('app_absence_edit', {'id': absence.id}) }}">modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_absence_new') }}">Ajouter une absence</a>
+{% endblock %}

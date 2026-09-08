@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Absence{% endblock %}
+
+{% block body %}
+    <h1>Absence</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Stagiaire</th>
+                <td>{{ absence.student.firstName }} {{ absence.student.familyName }}</td>
+            </tr>
+            <tr>
+                <th>Date de l'absence</th>
+                <td>{{ absence.absenceDay ? absence.absenceDay|date('d-m-Y') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Justificatif</th>
+                <td>{{ absence.absenceDocument }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_absence_index') }}">Retour aux absences</a>
+
+    <a href="{{ path('app_absence_edit', {'id': absence.id}) }}">Modifier</a>
+
+    {{ include('absence/_delete_form.html.twig') }}
+{% endblock %}

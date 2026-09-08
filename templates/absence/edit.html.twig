@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une absence{% endblock %}
+
+{% block body %}
+<div class="container py-4" style="max-width: 600px;">
+    <h1 class="mb-4">Modifier l'absence de {{ absence.student.firstName }} {{ absence.student.familyName }}</h1>
+
+    {{ include('absence/_form.html.twig') }}
+
+    <hr class="my-4">
+
+    <form method="post" action="{{ path('app_absence_delete', {'id': absence.id}) }}"
+          onsubmit="return confirm('Supprimer cette absence ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ absence.id) }}">
+        <button class="btn btn-outline-danger">Supprimer cette absence</button>
+    </form>
+
+    <a href="{{ path('app_absence_index') }}" class="btn btn-link mt-3">← Retour à la liste</a>
+</div>
+{% endblock %}
