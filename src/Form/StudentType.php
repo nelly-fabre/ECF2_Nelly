@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Student;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -14,9 +15,9 @@ class StudentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('idAfpa')
-            ->add('firstName')
-            ->add('familyName')
+            ->add('idAfpa', TextType::class, ['label' => 'identifiant AFPA'])
+            ->add('firstName', TextType::class, ['label' => 'Prénom'])
+            ->add('familyName', TextType::class, ['label' => 'Nom'])
             ->add('pictureFile', FileType::class, [
                 'label' => 'Photo (JPEG/PNG/WEBP, 5 Mo max)',
                 'mapped' => false,

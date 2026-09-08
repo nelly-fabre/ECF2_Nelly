@@ -17,7 +17,11 @@
             </tr>
             <tr>
                 <th>Justificatif</th>
-                <td>{{ absence.absenceDocument }}</td>
+                <td> {% if absence.absenceDocument %}
+                    <a href="{{ asset('uploads/documents/' ~ absence.absenceDocument) }}" target="_blank">Voir le PDF</a>
+                {% else %}
+                    <span class="text-muted">Aucun justificatif</span>
+                {% endif %}</td>
             </tr>
         </tbody>
     </table>

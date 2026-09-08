@@ -30,14 +30,16 @@ final class AbsenceController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_absence_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new/{student}', name: 'app_absence_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $absence = new Absence();
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->handleDocumentUpload($form, $absence, $slugger);
+
             $entityManager->persist($absence);
             $entityManager->flush();
 
@@ -59,12 +61,15 @@ final class AbsenceController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_absence_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->handleDocumentUpload($form, $absence, $slugger);
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_absence_index', [], Response::HTTP_SEE_OTHER);
@@ -87,10 +92,10 @@ final class AbsenceController extends AbstractController
         return $this->redirectToRoute('app_absence_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    private function handlePictureUpload(FormInterface $form, Absence $absence, SluggerInterface $slugger): void
+    private function handleDocumentUpload(FormInterface $form, Absence $absence, SluggerInterface $slugger): void
     {
-        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null documentFile */
-        $documentFile = $form->get('pictureFile')->getData();
+        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $documentFile */
+        $documentFile = $form->get('documentFile')->getData();
 
         if (!$documentFile) {
             return; // No new file uploaded, keep the existing document unchanged
