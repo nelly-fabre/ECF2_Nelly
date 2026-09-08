@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Absence;
+use App\Entity\Student;
 use App\Form\AbsenceType;
 use App\Repository\AbsenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,9 +32,11 @@ final class AbsenceController extends AbstractController
     }
 
     #[Route('/new/{student}', name: 'app_absence_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, Student $student): Response
     {
         $absence = new Absence();
+        $absence->setStudent($student);
+
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
@@ -63,6 +66,7 @@ final class AbsenceController extends AbstractController
     #[Route('/{id}/edit', name: 'app_absence_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+
         $form = $this->createForm(AbsenceType::class, $absence);
         $form->handleRequest($request);
 
