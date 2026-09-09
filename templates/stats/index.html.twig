@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Statistiques</h1>
+        <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">← Accueil</a>
+    </div>
+
+    <p class="text-muted">Perte de revenu estimée sur la base de 712 € répartis sur 21 jours ouvrés par mois.</p>
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Stagiaire</th>
+                <th>Nombre d'absences</th>
+                <th>Perte de revenu estimée</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">
+                        {{ student.firstName }} {{ student.familyName }}
+                    </td>
+                    <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.totalAbsencesCount }}</td>
+                    <td class="{% if student.unjustifiedAbsences >= 5 %}text-danger{% endif %}">{{ student.estimatedLostIncome|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucune donnée disponible.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

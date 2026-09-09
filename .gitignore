@@ -20,3 +20,6 @@
 ###< symfony/asset-mapper ###
 
 /ecf2_nelly.sql
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

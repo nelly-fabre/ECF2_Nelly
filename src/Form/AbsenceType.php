@@ -37,7 +37,7 @@ class AbsenceType extends AbstractType
                 'placeholder' => 'Sélectionnez un stagiaire',
             ])
             ->add('documentFile', FileType::class, [
-                'label' => 'Justificatif (PDF, JPG, PNG ou WebP, facultatif)',
+                'label' => 'Justificatif (PDF uniquement)',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
@@ -45,11 +45,9 @@ class AbsenceType extends AbstractType
                         maxSize: '5M',
                         mimeTypes: [
                             'application/pdf',
-                            'image/jpeg',
-                            'image/png',
-                            'image/webp',
+
                         ],
-                        mimeTypesMessage: 'Veuillez déposer un fichier PDF, JPG, PNG ou WebP.',
+                        mimeTypesMessage: 'Veuillez déposer un fichier PDF',
                     ),
                 ],
             ])

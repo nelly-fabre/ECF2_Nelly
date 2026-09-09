@@ -1,0 +1,10 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+    ignoreErrors:
+        - '#Property App\\Entity\\.*::\$id \(int\|null\) is never assigned int#'
+        - '#Method App\\Kernel::getAllowedEnvs\(\) is unused#'
