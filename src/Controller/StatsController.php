@@ -11,10 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class StatsController extends AbstractController
 {
     #[Route('/stats', name: 'app_stats')]
-    public function index(StudentRepository $studentRepository, ActionLogger $actionLogger): Response
+    public function index(StudentRepository $studentRepository): Response
     {
         $students = $studentRepository->findAll();
-        $logs = $actionLogger->getLogs();
+
 
         usort($students, function ($a, $b) {
             return $b->getTotalAbsencesCount() - $a->getTotalAbsencesCount();
@@ -22,7 +22,7 @@ final class StatsController extends AbstractController
 
         return $this->render('stats/index.html.twig', [
             'students' => $students,
-            'logs' => $logs,
+
         ]);
     }
 }
