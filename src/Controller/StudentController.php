@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Student;
 use App\Form\StudentType;
 use App\Repository\StudentRepository;
+use App\Service\ActionLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -31,7 +32,7 @@ final class StudentController extends AbstractController
 
     #[Route('/new', name: 'app_student_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, ActionLogger $actionLogger): Response
     {
         $student = new Student();
         $form = $this->createForm(StudentType::class, $student);
@@ -42,6 +43,7 @@ final class StudentController extends AbstractController
 
             $entityManager->persist($student);
             $entityManager->flush();
+            $actionLogger->log('create', 'Student', $student->getId(), $this->getUser()->getUserIdentifier());
 
             return $this->redirectToRoute('app_student_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -62,7 +64,7 @@ final class StudentController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_student_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Student $student, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function edit(Request $request, Student $student, EntityManagerInterface $entityManager, SluggerInterface $slugger, ActionLogger $actionLogger): Response
     {
         $form = $this->createForm(StudentType::class, $student);
         $form->handleRequest($request);
@@ -71,6 +73,7 @@ final class StudentController extends AbstractController
             $this->handlePictureUpload($form, $student, $slugger);
 
             $entityManager->flush();
+            $actionLogger->log('update', 'Student', $student->getId(), $this->getUser()->getUserIdentifier());
 
             return $this->redirectToRoute('app_student_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -83,11 +86,13 @@ final class StudentController extends AbstractController
 
     #[Route('/{id}', name: 'app_student_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Student $student, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Student $student, EntityManagerInterface $entityManager, ActionLogger $actionLogger): Response
     {
         if ($this->isCsrfTokenValid('delete' . $student->getId(), $request->getPayload()->getString('_token'))) {
+            $studentId = $student->getId();
             $entityManager->remove($student);
             $entityManager->flush();
+            $actionLogger->log('delete', 'Student', $studentId, $this->getUser()->getUserIdentifier());
         }
 
         return $this->redirectToRoute('app_student_index', [], Response::HTTP_SEE_OTHER);

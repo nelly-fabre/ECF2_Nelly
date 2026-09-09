@@ -6,6 +6,7 @@ use App\Entity\Absence;
 use App\Entity\Student;
 use App\Form\AbsenceType;
 use App\Repository\AbsenceRepository;
+use App\Service\ActionLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -32,7 +33,7 @@ final class AbsenceController extends AbstractController
     }
 
     #[Route('/new/{student}', name: 'app_absence_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, Student $student): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, Student $student, ActionLogger $actionLogger): Response
     {
         $absence = new Absence();
         $absence->setStudent($student);
@@ -45,6 +46,7 @@ final class AbsenceController extends AbstractController
 
             $entityManager->persist($absence);
             $entityManager->flush();
+            $actionLogger->log('create', 'Absence', $absence->getId(), $this->getUser()->getUserIdentifier());
 
             return $this->redirectToRoute('app_absence_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -64,7 +66,7 @@ final class AbsenceController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_absence_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function edit(Request $request, Absence $absence, EntityManagerInterface $entityManager, SluggerInterface $slugger, ActionLogger $actionLogger): Response
     {
 
         $form = $this->createForm(AbsenceType::class, $absence);
@@ -75,6 +77,7 @@ final class AbsenceController extends AbstractController
             $this->handleDocumentUpload($form, $absence, $slugger);
 
             $entityManager->flush();
+            $actionLogger->log('update', 'Absence', $absence->getId(), $this->getUser()->getUserIdentifier());
 
             return $this->redirectToRoute('app_absence_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -86,11 +89,13 @@ final class AbsenceController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_absence_delete', methods: ['POST'])]
-    public function delete(Request $request, Absence $absence, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Absence $absence, EntityManagerInterface $entityManager, ActionLogger $actionLogger): Response
     {
         if ($this->isCsrfTokenValid('delete' . $absence->getId(), $request->getPayload()->getString('_token'))) {
+            $absenceId = $absence->getId();
             $entityManager->remove($absence);
             $entityManager->flush();
+            $actionLogger->log('delete', 'Absence', $absenceId, $this->getUser()->getUserIdentifier());
         }
 
         return $this->redirectToRoute('app_absence_index', [], Response::HTTP_SEE_OTHER);
